@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSE Bot | v1.0</title>
+    <style>
+        :root { --bg: #0f172a; --chat-bg: #1e293b; --text: #f8fafc; --accent: #38bdf8; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        #chat-window { width: 400px; height: 600px; background: var(--chat-bg); border-radius: 12px; display: flex; flex-direction: column; border: 1px solid #334155; }
+        #messages { flex: 1; padding: 20px; overflow-y: auto; font-size: 0.95rem; line-height: 1.5; }
+        .bot-tag { color: var(--accent); font-weight: bold; margin-bottom: 4px; display: block; }
+        .input-box { display: flex; padding: 15px; border-top: 1px solid #334155; }
+        input { flex: 1; background: #0f172a; border: 1px solid #334155; color: white; padding: 10px; border-radius: 6px; outline: none; }
+        button { background: var(--accent); color: #0f172a; border: none; padding: 10px 15px; border-radius: 6px; margin-left: 8px; font-weight: bold; cursor: pointer; }
+        button:hover { opacity: 0.8; }
+    </style>
+</head>
+<body>
+
+<div id="chat-window">
+    <div id="messages"></div>
+    <div class="input-box">
+        <input type="text" id="userInput" placeholder="Ask about DSA, OS, or Pointers...">
+        <button onclick="send()">Send</button>
+    </div>
+</div>
+
+<script>
+    async function send() {
+        const box = document.getElementById('messages');
+        const input = document.getElementById('userInput');
+        const text = input.value;
+        if(!text) return;
+
+        box.innerHTML += `<div><b>You:</b> ${text}</div><br>`;
+        input.value = "";
+
+        // Calling your live FastAPI backend
+        const res = await fetch(`http://127.0.0.1:8000/chat?message=${encodeURIComponent(text)}`);
+        const data = await res.json();
+
+        box.innerHTML += `<div><span class="bot-tag">BOT:</span> ${data.reply}</div><hr style="border:0.5px solid #334155"><br>`;
+        box.scrollTop = box.scrollHeight;
+    }
+</script>
+
+</body>
+</html>
